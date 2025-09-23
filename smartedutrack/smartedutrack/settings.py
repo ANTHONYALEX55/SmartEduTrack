@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'accounts',
     'parents',
     'students',
-    'teacher'
+    'teachers'
 ]
 
 MIDDLEWARE = [
@@ -131,3 +131,12 @@ STATICFILES_DIRS = [BASE_DIR/'static']
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ],
+}
