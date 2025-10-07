@@ -2,3 +2,4 @@ djangorestframework
 psycopg2
 pillow
 djangorestframework-simplejwt
+gunicorn
