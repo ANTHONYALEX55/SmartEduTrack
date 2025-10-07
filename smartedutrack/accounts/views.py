@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import SessionLoginSerializer
-
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
@@ -27,12 +27,14 @@ class CreateTeacherParentView(CreateAPIView):
         return super().post(request, *args, **kwargs)
     
 class SessionLoginView(APIView):
-
+    permission_classes = []
     def post(self, request, *args, **kwargs):
         serializer = SessionLoginSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.validated_data
             login(request, user)  
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
             return Response({
                 "message": "Login successful",
                 "user": {
@@ -40,9 +42,45 @@ class SessionLoginView(APIView):
                     "username": user.username,
                     "email": user.email,
                     "role": user.role,
-                }
+                },
+                "tokens": {
+                "refresh": str(refresh),
+                "access": access_token,
+            }
             }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
+
+
+class JWTLoginView(APIView):
+    """
+    Custom JWT login view — validates credentials and returns tokens + user info.
+    """
+
+    def post(self, request, *args, **kwargs):
+        serializer = SessionLoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = serializer.validated_data
+
+        # Generate JWT tokens
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+
+        return Response({
+            "message": "Login successful",
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "role": user.role,
+            },
+            "tokens": {
+                "refresh": str(refresh),
+                "access": access_token,
+            }
+        }, status=status.HTTP_200_OK)
+
+
 
 
 class SessionLogoutView(APIView):
@@ -79,3 +117,5 @@ class PasswordResetConfirmView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"message": "Password reset successful"}, status=status.HTTP_200_OK)
+    
+
