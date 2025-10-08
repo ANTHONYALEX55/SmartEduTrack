@@ -53,7 +53,7 @@ class SectionListCreateView(generics.ListCreateAPIView):
 class AttendanceMarkView(generics.CreateAPIView):
     queryset = Attendance.objects.all()
     serializer_class = AttendanceMarkSerializer
-    # parmission_classes = [IsAuthenticated,IsTeacher]
+    parmission_classes = [IsAuthenticated,IsTeacher]
     permission_classes = []
 
     def post(self, request, *args, **kwargs):
@@ -69,20 +69,21 @@ class AttendanceMarkView(generics.CreateAPIView):
                 student_id = int(item["student_id"])
                 date = item["date"]
                 status_ = item["status"]
-
+                
                 attendance = Attendance.objects.filter(student_id=student_id, date=date).first()
-                teacher = User.objects.get(id=4)
+                
                 if attendance:
                     attendance.status = status_
                     
-                    attendance.marked_by = teacher
+                    attendance.marked_by = request.user
                     attendance.save()
                 else:
                     obj = Attendance.objects.create(
                         student_id=student_id,
                         date=date,
                         status=status_,
-                        marked_by=teacher)
+                        marked_by=request.user
+                        )
                     records.append(obj)
         else :
             obj, created = Attendance.objects.update_or_create(
