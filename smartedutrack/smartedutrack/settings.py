@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-c&5hv98m8ay#!51l_fn4+(!ay8=l%3pk%ymy_-u2ky1(q0w@-9
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['56.228.6.171']
+ALLOWED_HOSTS = ['13.60.75.239']
 
 
 # Application definition
@@ -124,9 +124,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 #development server
-STATICFILES_DIRS = [BASE_DIR/'static']
+#STATICFILES_DIRS = [BASE_DIR/'static']
 #production server
-# STATIC_ROOT = BASE_DIR/'static'
+STATIC_ROOT = '/var/www/smartedutrack/static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
