@@ -26,8 +26,17 @@ SECRET_KEY = 'django-insecure-c&5hv98m8ay#!51l_fn4+(!ay8=l%3pk%ymy_-u2ky1(q0w@-9
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['56.228.4.66']
 
+ALLOWED_HOSTS = ['arkcode.in', 'www.arkcode.in']
+
+# Trust secure headers from Cloudflare
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Optional:
+CSRF_TRUSTED_ORIGINS = [
+    "https://arkcode.in",
+    "https://www.arkcode.in",
+]
 
 # Application definition
 
