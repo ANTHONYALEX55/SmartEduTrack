@@ -29,4 +29,3 @@ response = requests.post(url, json=json_data)
 print(response.json())
 print(response.status_code)
 
-print('cicd done')
