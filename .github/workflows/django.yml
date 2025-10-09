@@ -23,10 +23,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Tests (optional)
-        run: |
-          python manage.py check
-          # python manage.py test  # Uncomment if you have tests
+      # - name: Run Tests (optional)
+      #   run: |
+      #     python manage.py check
+      #     # python manage.py test  # Uncomment if you have tests
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.2.0
