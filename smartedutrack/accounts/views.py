@@ -21,7 +21,6 @@ from .serializers import PasswordResetRequestSerializer, PasswordResetConfirmSer
 class CreateTeacherParentView(CreateAPIView):
     serializer_class = CreateUserSerializer
     permission_classes = [IsAuthenticated]
-    authentication_classes = [SessionAuthentication]
 
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)

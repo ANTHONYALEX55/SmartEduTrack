@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-c&5hv98m8ay#!51l_fn4+(!ay8=l%3pk%ymy_-u2ky1(q0w@-9
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-DEBUG = False
+DEBUG = True
 
 
 ALLOWED_HOSTS = ['arkcode.in', 'www.arkcode.in']
