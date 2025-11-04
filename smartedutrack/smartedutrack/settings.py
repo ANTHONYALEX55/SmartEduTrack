@@ -24,10 +24,10 @@ SECRET_KEY = 'django-insecure-c&5hv98m8ay#!51l_fn4+(!ay8=l%3pk%ymy_-u2ky1(q0w@-9
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-DEBUG = False
+DEBUG = True
 
 
-ALLOWED_HOSTS = ['arkcode.in', 'www.arkcode.in']
+ALLOWED_HOSTS = ['arkcode.in', 'www.arkcode.in','127.0.0.1']
 
 # Trust secure headers from Cloudflare
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -54,6 +54,9 @@ INSTALLED_APPS = [
     'teachers',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
+    'performance',
+    'reports',
+    'assignments'
 ]
 
 MIDDLEWARE = [
@@ -163,8 +166,8 @@ REST_FRAMEWORK = {
 }
 from datetime import timedelta
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),   # Access token valid for 30 mins
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),      # Refresh token valid for 7 days
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),  
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),      
 
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
@@ -175,3 +178,6 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
 }
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

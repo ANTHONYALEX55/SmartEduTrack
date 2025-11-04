@@ -2,7 +2,9 @@ from django.contrib import admin
 from .models import *
 
 # Register your models here.
-
+@admin.register(Attendance)
+class AttendanceAdmin(admin.ModelAdmin):
+    list_display = ['id','student','date','status','marked_by']
 @admin.register(Standard)
 class StandardAdmin(admin.ModelAdmin):
     list_display = ['id','name']
@@ -16,3 +18,6 @@ class SectionAdmin(admin.ModelAdmin):
 class StudentAdmin(admin.ModelAdmin):
     list_display = ['user', 'standard', 'section', 'created_at']
     
+@admin.register(Subject)
+class SubjectAdmin(admin.ModelAdmin):
+    list_display = ['name','code','standard','teacher']

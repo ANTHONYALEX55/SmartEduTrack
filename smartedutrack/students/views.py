@@ -4,7 +4,7 @@ from .serializers import (StudentRegistrationSerializer,
                           LinkParentSerializer,
                           AttendanceSerializer, AttendanceMarkSerializer)
 from .models import (Student,ParentStudent,Section,Standard,
-                     Attendance, Section)
+                     Attendance, Section,Subject)
 from .serializers import StandardSerializer, SectionSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
@@ -16,10 +16,55 @@ from .serializers import AttendanceDailySerializer, AttendanceSummarySerializer
 from datetime import datetime
 from django.db.models import Count, Q
 import json
-
-
+from .serializers import MarkSerializer
+from .permissions import IsParentOrStudent
+from performance.models import Exam,Mark
 
 # Create your views here.
+
+class StudentMarksListView(generics.ListAPIView):
+    
+    serializer_class = MarkSerializer
+    permission_classes = [IsAuthenticated, IsParentOrStudent]
+    queryset = Mark.objects.select_related('subject', 'exam', 'student')
+
+    def get_queryset(self):
+        student_id = self.kwargs.get('student_id')
+        student = get_object_or_404(Student, pk=student_id)
+        
+        self.check_object_permissions(self.request, student)
+        qs = self.queryset.filter(student=student)
+
+        exam_id = self.request.query_params.get('exam')
+        subject_id = self.request.query_params.get('subject')
+        if exam_id:
+            qs = qs.filter(exam_id=exam_id)
+        if subject_id:
+            qs = qs.filter(subject_id=subject_id)
+
+        return qs.order_by('-exam__date', 'subject__name')
+
+
+class MyMarksListView(generics.ListAPIView):
+    serializer_class = MarkSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = Mark.objects.select_related('subject', 'exam','entered_by', 'student')
+
+    def get_queryset(self):
+        user = self.request.user
+        student = getattr(user, 'student_profile', None)  
+        if student:
+            return self.queryset.filter(student=student).order_by('-exam__date', 'subject__name')
+
+        from .models import ParentStudent
+        children_ids = ParentStudent.objects.filter(parent=user).values_list('student_id', flat=True)
+        student_id = self.request.query_params.get('student')
+        if student_id and int(student_id) in set(children_ids):
+            return self.queryset.filter(student_id=student_id).order_by('-exam__date', 'subject__name')
+
+        return Mark.objects.none()
+
+
 class IsTeacher(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.role in ["teacher"]
@@ -111,8 +156,7 @@ class ClassAttendanceView(generics.ListAPIView):
         section_id = self.kwargs["section_id"]
         section = Section.objects.get(id=section_id)
         date = self.request.query_params.get("date")
-        user_ids = [student.user.id for student in Student.objects.filter(section=section)]
-        students = User.objects.filter( id__in = user_ids,role="STUDENT")
+        students = Student.objects.filter(section=section)
         if date:
             return Attendance.objects.filter(student__in=students, date=date)
         return Attendance.objects.filter(student__in=students).order_by("-date")
@@ -137,12 +181,12 @@ class AttendanceReportPrincipalView(generics.GenericAPIView):
             std = Standard.objects.get(name=standard)
             students = Student.objects.filter(standard=std)
             users = [student.user for student in students ]
-            queryset = queryset.filter(student__in=users)
+            queryset = queryset.filter(student__in=students)
         if section:
             sec = Section.objects.filter(name=section)
-            students = Student.objects.filter(section=sec)
+            students = Student.objects.filter(section__in=sec)
             users = [student.user for student in students ]
-            queryset = queryset.filter(student__in=users)
+            queryset = queryset.filter(student__in=students)
         if from_date and to_date:
             queryset = queryset.filter(date__range=[from_date, to_date])
 
@@ -153,13 +197,13 @@ class AttendanceReportPrincipalView(generics.GenericAPIView):
             student_records = queryset.filter(student_id=sid)
             if not student_records.exists():
                 continue
-            user = student_records.first().student
+            student = student_records.first().student
             total_days = student_records.count()
             total_present = student_records.filter(status="PRESENT").count()
             total_absent = student_records.filter(status="ABSENT").count()
-            student = Student.objects.get(user=user)
+            
             summary_data.append({
-                "student_name": f'{user.first_name} {user.last_name}',
+                "student_name": f'{student.user.first_name} {student.user.last_name}',
                 "standard": student.standard.name,
                 "section": student.section.name,
                 "total_present": total_present,
@@ -192,8 +236,7 @@ class AttendanceReportParentView(generics.GenericAPIView):
 
         data = []
         for student_ in linked_students:
-            user = student_.user
-            user_records = Attendance.objects.filter(student=user)
+            user_records = Attendance.objects.filter(student=student_)
             if from_date and to_date:
                 user_records = user_records.filter(date__range=[from_date, to_date])
 
@@ -201,7 +244,7 @@ class AttendanceReportParentView(generics.GenericAPIView):
                 continue
 
             student_ = user_records.first().student
-            student = Student.objects.get(user=student_)
+            student = student_
             total_days = user_records.count()
             total_present = user_records.filter(status="PRESENT").count()
             total_absent = user_records.filter(status="ABSENT").count()

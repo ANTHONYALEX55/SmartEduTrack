@@ -1,0 +1,27 @@
+
+.main{
+  margin-top: 15%;
+  margin-left: 38%;
+  border: 2px solid black;
+  width: fit-content;
+  padding: 100px;
+  box-shadow: 10px 20px 20px rgb(red, green, blue);
+}
+.main label{
+  font-size: 25px;
+}
+.main input{
+  padding: 8px 20px;
+  margin-left: 10px;
+  
+}
+.main button{
+  margin-top: 20px;
+  padding: 10px 30px;
+  font-size: 20px;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}

@@ -1,6 +1,30 @@
 from rest_framework import serializers
 from accounts.models import User
-from .models import Student, Standard, Section,ParentStudent,Attendance
+from .models import Student, Standard, Section,ParentStudent,Attendance,Subject
+from performance.models import Mark,Exam
+
+class SubjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subject
+        fields = ['id', 'name', 'code']
+
+class ExamSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Exam
+        fields = ['id', 'name', 'date']
+
+class MarkSerializer(serializers.ModelSerializer):
+    subject = SubjectSerializer(read_only=True)
+    exam = ExamSerializer(read_only=True)
+
+    class Meta:
+        model = Mark
+        fields = [
+            'id','student','subject','exam','marks_obtained','max_marks','grade','remarks',
+            'entered_by','updated_at'
+        ]
+        read_only_fields = ['entered_by','updated_at']
+
 
 class StudentRegistrationSerializer(serializers.ModelSerializer):
     name = serializers.CharField(write_only=True)
@@ -124,3 +148,4 @@ class AttendanceSummarySerializer(serializers.Serializer):
     total_present = serializers.IntegerField()
     total_absent = serializers.IntegerField()
     attendance_percentage = serializers.CharField()
+

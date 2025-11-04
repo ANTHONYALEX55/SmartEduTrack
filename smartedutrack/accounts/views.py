@@ -15,7 +15,8 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from rest_framework import generics, status
 from rest_framework.response import Response
-from .serializers import PasswordResetRequestSerializer, PasswordResetConfirmSerializer
+from .serializers import (PasswordResetRequestSerializer,
+                           PasswordResetConfirmSerializer)
 # Create your views here.
 
 class CreateTeacherParentView(CreateAPIView):

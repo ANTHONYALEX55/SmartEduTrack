@@ -36,8 +36,7 @@ class ParentStudent(models.Model):
     
 class Attendance(models.Model):
     student = models.ForeignKey(
-        User, on_delete=models.CASCADE,
-        limit_choices_to={"role": "STUDENT"},
+        Student, on_delete=models.CASCADE,
         related_name="attendances"
     )
     date = models.DateField()
@@ -52,4 +51,13 @@ class Attendance(models.Model):
 
 
     def __str__(self):
-        return f"{self.student.username} - {self.date} - {self.status}"
+        return f"{self.student.user.username} - {self.date} - {self.status}"
+
+class Subject(models.Model):
+    name = models.CharField(max_length=100)
+    code = models.CharField(max_length=20, unique=True)
+    standard = models.ForeignKey(Standard, on_delete=models.CASCADE, related_name='subjects')
+    teacher = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.standard.name})"

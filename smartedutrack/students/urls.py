@@ -16,5 +16,7 @@ urlpatterns = [
                                                name="attendance_class"),
     path("attendance-report/principal/", views.AttendanceReportPrincipalView.as_view(), name="attendance-report-principal"),
     path("attendance-report/parent/", views.AttendanceReportParentView.as_view(), name="attendance-report-parent"),
+    path('students/<int:student_id>/marks/', views.StudentMarksListView.as_view(), name='student-marks'),
+    path('students/me/marks/', views.MyMarksListView.as_view(), name='my-marks'),
 
 ]
