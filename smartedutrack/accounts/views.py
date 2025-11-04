@@ -101,7 +101,7 @@ class PasswordResetRequestView(generics.GenericAPIView):
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
 
-        reset_link = f"http://127.0.0.1:8000/api/accounts/password-reset-confirm/?uid={uid}&token={token}"
+        reset_link = f"https://arkcode.in/api/accounts/password-reset-confirm/?uid={uid}&token={token}"
 
         return Response(
             {"message": "Password reset link generated", "reset_link": reset_link},
