@@ -38,9 +38,9 @@ class StudentRegistrationSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'email', 'password', 'standard_id', 'section_id']
 
     def create(self, validated_data):
-        
+            
         user = User.objects.create(
-            username=validated_data['email'],
+            username=validated_data['name'],
             email=validated_data['email'],
             first_name=validated_data['name'],
             role='STUDENT'
@@ -69,6 +69,12 @@ class StudentRegistrationSerializer(serializers.ModelSerializer):
             "section": instance.section.name if instance.section else None,
             "message": "Student registered successfully"
         }
+    
+    def validate_name(self,value):
+        qs = User.objects.filter(username=value)
+        if qs.exists():
+            raise serializers.ValidationError('username already in use you another name')
+        return value
 
 
 class LinkParentSerializer(serializers.ModelSerializer):
