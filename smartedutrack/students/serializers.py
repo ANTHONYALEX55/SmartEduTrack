@@ -2,7 +2,7 @@ from rest_framework import serializers
 from accounts.models import User
 from .models import Student, Standard, Section,ParentStudent,Attendance,Subject
 from performance.models import Mark,Exam
-
+from rest_framework import status
 class SubjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subject
@@ -73,7 +73,7 @@ class StudentRegistrationSerializer(serializers.ModelSerializer):
     def validate_name(self,value):
         qs = User.objects.filter(username=value)
         if qs.exists():
-            raise serializers.ValidationError('username already in use you another name')
+            raise serializers.ValidationError('username already in use you another name',code=status.HTTP_409_CONFLICT)
         return value
 
 
