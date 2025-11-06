@@ -13,11 +13,14 @@ class StandardAdmin(admin.ModelAdmin):
 class SectionAdmin(admin.ModelAdmin):
     list_display = ['id','name', 'standard']
     
-
+@admin.register(ParentStudent)
+class ParentStudentAdmin(admin.ModelAdmin):
+    list_display = ['parent','student']
+    
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ['user', 'standard', 'section', 'created_at']
+    list_display = ['id','user', 'standard', 'section', 'created_at']
     
 @admin.register(Subject)
 class SubjectAdmin(admin.ModelAdmin):
-    list_display = ['name','code','standard','teacher']
+    list_display = ['id','name','code','standard','teacher']
