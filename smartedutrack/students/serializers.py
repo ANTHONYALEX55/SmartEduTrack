@@ -102,6 +102,7 @@ class LinkParentSerializer(serializers.ModelSerializer):
         parent = User.objects.get(id=validated_data['parent_id'])
         student = Student.objects.get(id=validated_data['student_id'])
         link, created = ParentStudent.objects.get_or_create(parent=parent, student=student)
+        
         return link
 
     def to_representation(self, instance):
