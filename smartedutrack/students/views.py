@@ -263,3 +263,7 @@ class AttendanceReportParentView(generics.GenericAPIView):
             data.append(child_data)
 
         return Response({"children": data})
+    
+class StudentStandardView(generics.ListAPIView):
+    serializer_class = StandardSerializer
+    permission_classes = []

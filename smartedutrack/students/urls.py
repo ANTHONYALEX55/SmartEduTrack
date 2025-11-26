@@ -18,5 +18,6 @@ urlpatterns = [
     path("attendance-report/parent/", views.AttendanceReportParentView.as_view(), name="attendance-report-parent"),
     path('students/<int:student_id>/marks/', views.StudentMarksListView.as_view(), name='student-marks'),
     path('students/me/marks/', views.MyMarksListView.as_view(), name='my-marks'),
+    path('standardsection/',views.StudentStandardView.as_view())
 
 ]
